@@ -1,7 +1,7 @@
 import turtle as t
 import random
 
-def stars(x, y):
+def stars(x, y, n):
     t.up()
     t.setpos(x, y)
     t.down()
@@ -14,7 +14,7 @@ def stars(x, y):
     t.begin_fill()
     # Draw the star
     for i in range(6):
-        t.forward(100)
+        t.forward(n*10)
         t.left(144)
     # End filling the star
     t.end_fill()
@@ -25,4 +25,4 @@ t.speed(20)
 for n in range(20):
     x = random.randint(-300, 300)
     y = random.randint(-300, 300)
-    stars(x, y)
+    stars(x, y, n)
