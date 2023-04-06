@@ -40,3 +40,4 @@ for func in func_list:
         exec(func)
         t.goto(x, y)
         
+t.exitonclick()

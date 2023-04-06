@@ -27,7 +27,7 @@ w = [
     'check','environment','leg','dark','various','rather','laugh','guess','executive','prove','hang','entire','rock','forget','claim','remove','manager','enjoy','network','legal','religious','cold','final','main','science','green','memory','card','above','seat','cell','establish','nice','trial','expert','spring',
     'firm','radio','visit','management','avoid','imagine','tonight','huge','ball','finish','yourself','theory','impact','respond','statement','maintain','charge','popular','traditional','onto','reveal','direction','weapon','employee','cultural','contain','peace','pain','apply','measure','wide','shake',
     'fly','interview','manage','chair','fish','particular','camera','structure','politics','perform','bit','weight','suddenly','discover','candidate','production','treat','trip','evening','affect','inside','conference','unit','style','adult','worry','range','mention','deep','edge','specific','writer','trouble',
-    'necessary','throughout','challenge','fear','shoulder','institution','middle','sea','dream','bar','beautiful','property','instead','improve','stuff','detail','method','somebody','magazine','hotel','soldier','reflect','heavy','sexual','bag','heat','marriage','tough','sing','surface','purpose','exist','pattern',
+    'necessary','throughout','challenge','fear','shoulder','institution','middle','sea','dream','bar','beautiful','property','instead','improve','stuff','detail','method','somebody','magazine','hotel','soldier','reflect','heavy','bag','heat','marriage','tough','sing','surface','purpose','exist','pattern',
     'whom','skin','agent','owner','machine','gas','ahead','generation','commercial','address','cancer','item','reality','coach','Mrs','yard','beat','violence','total','tend','investment','discussion','finger','garden','notice','collection','modern','task','partner','positive','civil','kitchen','consumer','shot',
     'budget','wish','painting','scientist','safe','agreement','capital','mouth','nor','victim','newspaper','threat','responsibility','smile','attorney','score','account','interesting','audience','rich','dinner','vote','western','relate','travel','debate','prevent','citizen','majority','none','front','born','admit',
     'senior','assume','wind','key','professional','mission','fast','alone','customer','suffer','speech','successful','option','participant','southern','fresh','eventually','forest','video','global','Senate','reform','access','restaurant','judge','publish','relation','release','bird','opinion','credit','critical',
@@ -61,7 +61,7 @@ def rand_question(w): #2
 
 
 best_et = 0 #1 최단 기록이 0초라면 아직 최단 기록이 없다고 가정
-wrong_w = [] #2 전체 틀린 단어용 빈 집합(set)
+wrong_set = set() #2 전체 틀린 단어용 빈 집합(중복 제거)
 while True: #1
     print("[타자 게임] 준비되면 엔터! (q: 종료)") #1
     ready = input() #1
@@ -69,8 +69,10 @@ while True: #1
         break #1
 
     start = time.time()
-    wrong_w = wrong_w + rand_question(w) #2
+    wrong_w = rand_question(w) #2: 다섯 번 질문 함수
+    wrong_set.update(wrong_w) #2
     end = time.time()
+
 
     et = end - start
     if best_et == 0: #1 첫 기록
@@ -79,14 +81,14 @@ while True: #1
         best_et = et #1
     print("타자 시간 :", format(et, ".2f"), "초")
     print("최단 시간 :", format(best_et, ".2f"), "초") #1
-    print("전체 틀린 단어: ", wrong_w) #2
+    if(len(wrong_set)>0):
+        print("전체 틀린 단어: ", wrong_set) #2
     print("=====================") #1
 
-    wrong_set = set(wrong_w)
-    wrong_w = list(wrong_set)
-    if (len(wrong_w) > 5): #2 전체 틀린 단어 갯수가 일정 이상되면
+    if (len(wrong_set) > 5): #2 전체 틀린 단어 갯수가 일정 이상되면
         print("*** 틀린단어 복습 ***") #2
-        wrong_w = rand_question(wrong_w) #2
+        wrong_w = rand_question(list(wrong_set)) #2
+        wrong_set = set(wrong_w) #2
         print("*** 틀린단어 복습 끝!! ***") #2
 
 print("Good bye!") #1
