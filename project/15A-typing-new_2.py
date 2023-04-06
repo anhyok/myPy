@@ -100,9 +100,7 @@ while True: #1
         print("전체 틀린 단어: ", wrong_set) #2
     print("=====================") #1
 
-    wrong_set = set(wrong_w)
-    wrong_w = list(wrong_set)
-    if (len(wrong_w) >= 5): #2 전체 틀린 단어 갯수가 일정 이상되면
+    if (len(wrong_set) >= 5): #2 전체 틀린 단어 갯수가 일정 이상되면
         print("*** 틀린단어 복습 ***") #2
         wrong_w = rand_question(list(wrong_set)) #2
         wrong_set = set(wrong_w) #2
