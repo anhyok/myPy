@@ -1,3 +1,18 @@
+#1. '틀렸으면' 단어를 모은다
+
+#2. 모아둔 '틀린단어' list가 5개 이상?
+
+#3. '틀린단어' list로 한 게임 더
+# - 해당 코드 Copy & Paste?
+# - 또는 함수?hjhjfjkf
+
+#4. 잘 되면, 중복단어 에 Set()으로 중복제거
+# - 다시 list()하면 리스트로 바꿀 수 있음
+
+# ** 1번에서 중복 아닌 것만 넣으면
+# ** 4번은 안해도 됨
+
+
 import random
 import time
 
@@ -84,7 +99,7 @@ while True: #1
 
     wrong_set = set(wrong_w)
     wrong_w = list(wrong_set)
-    if (len(wrong_w) > 5): #2 전체 틀린 단어 갯수가 일정 이상되면
+    if (len(wrong_w) >= 5): #2 전체 틀린 단어 갯수가 일정 이상되면
         print("*** 틀린단어 복습 ***") #2
         wrong_w = rand_question(wrong_w) #2
         print("*** 틀린단어 복습 끝!! ***") #2
