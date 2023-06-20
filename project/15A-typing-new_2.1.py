@@ -88,7 +88,6 @@ while True: #1
     wrong_set.update(wrong_w) #2
     end = time.time()
 
-
     et = end - start
     if best_et == 0: #1 첫 기록
         best_et = et #1
