@@ -1,3 +1,18 @@
+#1. '틀렸으면' 단어를 모은다
+
+#2. 모아둔 '틀린단어' list가 5개 이상?
+
+#3. '틀린단어' list로 한 게임 더
+# - 해당 코드 Copy & Paste?
+# - 또는 함수?
+
+#4. 잘 되면 Set()으로 중복제거
+# - 필요하면, 다시 list()를 이용하여 리스트로 바꿀 수 있음
+
+# ** 1번에서 중복 아닌 것만 넣으면
+# ** 4번은 안해도 됨
+
+
 import random
 import time
 
@@ -40,18 +55,11 @@ w = [
     'principle','survive','lift','border','competition','jump','gather','limit','fit','cry','equipment','worth','associate','critic','warm','aspect','insist','failure','annual','French','Christmas','comment','responsible','affair','procedure','regular','spread','chairman','baseball','soft','ignore','egg','belief',
     'demonstrate','anybody','murder','gift','religion','review','editor','engage','coffee','document','speed','cross','influence','anyway','threaten','commit','female','youth','wave','afraid','quarter','background','native','broad','wonderful','deny','apparently','slightly','reaction','twice','suit','perspective',
     'growing','blow','construction','intelligence','destroy','cook','connection','burn','shoe','grade','context','committee','hey','mistake','location','clothes','Indian','quiet','dress','promise','aware','neighbor','function','bone','active','extend','chief','combine','wine','below','cool','voter','learning','bus',
-    ] # ref: https://www.wordfrequency.info/
+    ] # ref: https://www.wordfrequency.info/  #1
 
-best_et = 0 #
-
-while True: #
+def rand_question(w): #2
     n = 1
-    print("[타자 게임] 준비되면 엔터! (q: 종료)") #
-    ready = input() #
-    if ready == 'q': #
-        break #
-    start = time.time()
-
+    wrong = [] #2 틀린 단어용 빈 리스트
     q = random.choice(w)
     while n <= 5:
         print("*문제", n)
@@ -63,15 +71,38 @@ while True: #
             q = random.choice(w)
         else:
             print("오타, 다시 도전")
+            wrong.append(q) #2
+    return wrong #2 틀린 단어 리스트
 
+
+best_et = 0 #1 최단 기록이 0초라면 아직 최단 기록이 없다고 가정
+wrong_set = set() #2 전체 틀린 단어용 빈 집합(중복 제거)
+while True: #1
+    print("[타자 게임] 준비되면 엔터! (q: 종료)") #1
+    ready = input() #1
+    if ready == 'q': #1
+        break #1
+
+    start = time.time()
+    wrong_w = rand_question(w) #2: 다섯 번 질문 함수
+    wrong_set.update(wrong_w) #2
     end = time.time()
-    et = end - start
-    if best_et == 0: #
-        best_et = et #
-    elif best_et > et: #
-        best_et = et #
-    print("타자 시간 :", format(et, ".2f"), "초")
-    print("최단 시간 :", format(best_et, ".2f"), "초") #
-    print("=====================") #
 
-print("Good bye!") #
+    et = end - start
+    if best_et == 0: #1 첫 기록
+        best_et = et #1
+    elif best_et > et: #1
+        best_et = et #1
+    print("타자 시간 :", format(et, ".2f"), "초")
+    print("최단 시간 :", format(best_et, ".2f"), "초") #1
+    if(len(wrong_set)>0):
+        print("전체 틀린 단어: ", wrong_set) #2
+    print("=====================") #1
+
+    if (len(wrong_set) >= 5): #2 전체 틀린 단어 갯수가 일정 이상되면
+        print("*** 틀린단어 복습 ***") #2
+        wrong_w = rand_question(list(wrong_set)) #2
+        wrong_set = set(wrong_w) #2
+        print("*** 틀린단어 복습 끝!! ***") #2
+
+print("Good bye!") #1

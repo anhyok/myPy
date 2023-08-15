@@ -56,13 +56,12 @@ def rand_question(w): #2
             q = random.choice(w)
         else:
             print("오타, 다시 도전")
-            if q not in wrong: #2 
-                wrong.append(q) #2
-    return wrong #2 틀린 단어 리스트
+            wrong.append(q) #2
+    return set(wrong) #2 틀린 단어 리스트
 
 
 best_et = 0 #1 최단 기록이 0초라면 아직 최단 기록이 없다고 가정
-wrong_w = [] #2 전체 틀린 단어용 빈 리스트
+wrong_w = set() #2 전체 틀린 단어용 빈 집합(set)
 while True: #1
     print("[타자 게임] 준비되면 엔터! (q: 종료)") #1
     ready = input() #1
@@ -70,7 +69,7 @@ while True: #1
         break #1
 
     start = time.time()
-    wrong_w = wrong_w + rand_question(w) #2
+    wrong_w = wrong_w.update(rand_question(w)) #2
     end = time.time()
 
     et = end - start
@@ -82,10 +81,11 @@ while True: #1
     print("최단 시간 :", format(best_et, ".2f"), "초") #1
     print("전체 틀린 단어: ", wrong_w) #2
     print("=====================") #1
-    
-    if (len(wrong_w) > 5): #2 전체 틀린 단어 갯수가 일정 이상되면
+
+    wrong_list = list(wrong_w)
+    if (len(wrong_list) > 5): #2 전체 틀린 단어 갯수가 일정 이상되면
         print("*** 틀린단어 복습 ***") #2
-        wrong_w = rand_question(wrong_w) #2
+        wrong_w = rand_question(wrong_list) #2
         print("*** 틀린단어 복습 끝!! ***") #2
 
 print("Good bye!") #1
