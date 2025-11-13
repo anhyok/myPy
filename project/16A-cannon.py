@@ -47,3 +47,4 @@ t.onkeypress(turn_down, "Down")
 t.onkeypress(fire, "space")
 
 t.listen()
+t.mainloop()

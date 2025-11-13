@@ -52,3 +52,5 @@ t.onkeypress(turn_left, "Left")
 t.onkeypress(turn_down, "Down")
 t.listen()
 play()
+
+t.mainloop()
