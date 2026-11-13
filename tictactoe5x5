@@ -1,0 +1,179 @@
+import math
+
+BOARD_SIZE = 3
+game_board: str = ''
+
+AI = True 
+HUMAN = False 
+
+AI_MARK = 'X' 
+HUMAN_MARK = 'O' 
+
+def main(): 
+    global BOARD_SIZE, game_board
+    
+    while True:
+        size_input = input("보드 크기를 선택하세요 (3 또는 5): ").strip()
+        if size_input in ['3', '5']:
+            BOARD_SIZE = int(size_input)
+            break
+        print("잘못된 입력입니다. 3 또는 5를 입력해주세요.")
+        
+    game_board = '_' * (BOARD_SIZE * BOARD_SIZE)
+    player: bool = HUMAN 
+    
+    print(f'\n{BOARD_SIZE}x{BOARD_SIZE} 게임을 시작합니다.') 
+    draw()
+    
+    # 3x3은 무조건 끝까지 완전 탐색 (depth=9)
+    max_depth = 9 if BOARD_SIZE == 3 else 3
+    
+    while find_empty(game_board) and not is_end(game_board): 
+        if player == AI: 
+            print("AI가 계산 중입니다...", end="", flush=True)
+            position, _ = minimax(game_board, max_depth, float('-inf'), float('inf'), AI) 
+            place(position, AI_MARK) 
+            player = HUMAN 
+        else: 
+            position = input_num() 
+            place(position, HUMAN_MARK) 
+            player = AI 
+        draw() 
+    ending() 
+
+
+def find_empty(board: str) -> tuple[int, ...]: 
+    return tuple(x for x, cell in enumerate(board) if cell == '_') 
+
+
+def is_end(board: str) -> bool: 
+    return is_win(board, AI_MARK) or is_win(board, HUMAN_MARK) 
+
+
+def is_win(board: str, player: str) -> bool:
+    size = BOARD_SIZE
+    
+    # 가로 검사
+    for i in range(0, size * size, size):
+        if all(board[i + j] == player for j in range(size)):
+            return True
+            
+    # 세로 검사
+    for i in range(size):
+        if all(board[i + j * size] == player for j in range(size)):
+            return True
+            
+    # 대각선 ↘ 검사 (0, 4, 8 / 0, 6, 12, 18, 24)
+    if all(board[i * (size + 1)] == player for i in range(size)):
+        return True
+        
+    # 대각선 ↙ 검사 (2, 4, 6 / 4, 8, 12, 16, 20)
+    if all(board[(i + 1) * (size - 1)] == player for i in range(size)):
+        return True
+        
+    return False
+
+
+def evaluate(board: str) -> int: 
+    # 승리 조건 최우선 평가
+    if is_win(board, AI_MARK): 
+        return 1000 
+    elif is_win(board, HUMAN_MARK): 
+        return -1000 
+        
+    # [핵심 수정] 3x3 모드에서는 휴리스틱 가중치가 개입하면 미니맥스가 교란되므로 0점 처리
+    if BOARD_SIZE == 3:
+        return 0
+        
+    # 5x5 모드에서만 제한된 depth 내에서 활용할 휴리스틱 가중치 작동
+    score = 0
+    size = BOARD_SIZE
+    center = size // 2
+    for i, cell in enumerate(board):
+        if cell == AI_MARK:
+            r, c = i // size, i % size
+            score += (size - abs(r - center) - abs(c - center))
+        elif cell == HUMAN_MARK:
+            r, c = i // size, i % size
+            score -= (size - abs(r - center) - abs(c - center))
+    return score
+
+
+def minimax(board: str, depth: int, alpha: float, beta: float, max_player: bool) -> tuple: 
+    # [수정] 승패 여부를 가장 먼저 확인하도록 기저 조건 순서 정리
+    if is_win(board, AI_MARK) or is_win(board, HUMAN_MARK) or depth == 0 or not find_empty(board): 
+        return -1, evaluate(board) 
+        
+    position = -1 
+    if max_player == AI: 
+        value = float('-inf') 
+        for each in find_empty(board): 
+            next_board = board[:each] + AI_MARK + board[each + 1:]
+            _, score = minimax(next_board, depth - 1, alpha, beta, HUMAN) 
+            if score > value: 
+                value = score 
+                position = each 
+            alpha = max(alpha, value)
+            if beta <= alpha: 
+                break 
+        return position, value 
+    else: 
+        value = float('inf') 
+        for each in find_empty(board): 
+            next_board = board[:each] + HUMAN_MARK + board[each + 1:]
+            _, score = minimax(next_board, depth - 1, alpha, beta, AI) 
+            if score < value: 
+                value = score 
+                position = each 
+            beta = min(beta, value)
+            if beta <= alpha: 
+                break 
+        return position, value 
+
+
+def place(x: int, player: str) -> bool: 
+    if is_valid(x): 
+        global game_board 
+        game_board = game_board[:x] + player + game_board[x + 1:] 
+        return True 
+    return False 
+
+
+def is_valid(x: int) -> bool: 
+    return x in find_empty(game_board) 
+
+
+def input_num() -> int: 
+    size = BOARD_SIZE
+    while True: 
+        input_str = input(f'\n위치 선택 (1 ~ {size*size})? ') 
+        if input_str.isdecimal(): 
+            num = int(input_str) - 1 
+            if num in find_empty(game_board): 
+                return num 
+        print("잘못된 입력이거나 이미 돌이 놓인 자리입니다. 다시 입력해주세요.") 
+
+
+def draw(): 
+    size = BOARD_SIZE
+    print("\n--- 현재 보드 상태 ---")
+    for r in range(size - 1, -1, -1):
+        idx_start = r * size
+        idx_end = (r + 1) * size
+        board_row = game_board[idx_start:idx_end]
+        key_row = " ".join(f"{x+1:2d}" for x in range(idx_start, idx_end))
+        print(f"{board_row}   {key_row}")
+    print("----------------------")
+    
+    
+def ending(): 
+    if is_win(game_board, AI_MARK): 
+        print('AI Win') 
+    elif is_win(game_board, HUMAN_MARK): 
+        print('HUMAN Win') 
+    else: 
+        print('Tie') 
+
+
+if __name__ == '__main__': 
+    main()
