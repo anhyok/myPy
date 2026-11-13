@@ -88,3 +88,5 @@ t.onkeypress(turn_down, "Down")
 t.onkeypress(start, "space")
 t.listen()
 message("Turtle Run", "[Space]")
+
+t.mainloop()
